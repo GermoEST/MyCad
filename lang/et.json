@@ -5,7 +5,9 @@
         "author": "",
         "version": "15"
     },
-    "title": "Krundiplaneerija V15",
+    "title": "MyCAD V15",
+    "unsaved_title": "Salvestamata muudatused",
+    "unsaved_msg": "Joonisel on salvestamata muudatusi.\n\nKas salvestada need enne?",
     "file": "Fail",
     "save_proj": "Salvesta projekt...",
     "load_proj": "Ava projekt...",

@@ -52,7 +52,9 @@ DEFAULT_LANGUAGE = "et"
 # Built-in English strings: only used when lang/ is missing or a key is not
 # present in any language file. lang/en.json is written from this on first run.
 FALLBACK_STRINGS = {
-    "title": "Floor Plan Maker V15",
+    "title": "MyCAD V15",
+    "unsaved_title": "Unsaved changes",
+    "unsaved_msg": "The drawing has unsaved changes.\n\nSave them first?",
     "file": "File",
     "save_proj": "Save Project...",
     "load_proj": "Open Project...",
@@ -796,6 +798,11 @@ FURN_3D = {
 CUSTOM_FURN_HEIGHT = 75
 SHELF_BOARD = 3      # shelf board thickness (cm)
 SHELF_POST = 5       # shelf corner post size (cm)
+
+
+def _cm(v):
+    """Length for display: at most one decimal (30.5658 -> 30.6)."""
+    return f"{round(v, 1):g}"
 
 
 def _hex6(c):
@@ -1548,7 +1555,7 @@ class ShelfView:
         for (t, room) in levels:
             c.create_rectangle(self.fx(0), self.fz(z0 + t), self.fx(W), self.fz(z0 + t - board),
                                fill=fill, outline=dark)
-            txt = f"↕ {room:g} cm" if room is not None else "↑"
+            txt = f"↕ {_cm(room)} cm" if room is not None else "↑"
             c.create_text(self.fx(W) + 8, self.fz(z0 + t) - 2, text=txt, anchor="sw",
                           fill="#68708a", font=("TkDefaultFont", 8))
         # contents, farthest first; things further back are drawn paler
@@ -1581,7 +1588,7 @@ class ShelfView:
             dz, hh = app._furn_z(self.sel)
             c.create_text(self.fx(u0), self.fz(dz + hh) - 2, anchor="sw", fill=ink,
                           font=("TkDefaultFont", 8, "bold"),
-                          text=f"{b[2]-b[0]:g} × {hh:g} cm   ↔ {u0:g} cm   ↑ {dz:g} cm")
+                          text=f"{_cm(b[2]-b[0])} × {_cm(hh)} cm   ↔ {_cm(u0)} cm   ↑ {_cm(dz)} cm")
 
     @staticmethod
     def _mix(a, b, t):
@@ -1637,7 +1644,7 @@ class ShelfView:
                                width=3 if sel else 1)
             self.top_hits.append((o, x0, y0, x1, y1))
         if band:
-            txt = app.get_text("top_view_board").format(z=f"{band[0]:g}")
+            txt = app.get_text("top_view_board").format(z=_cm(band[0]))
         else:
             txt = app.get_text("top_view_all")
         self.top_lbl.configure(text=f"⬒ {txt}")
@@ -1646,7 +1653,7 @@ class ShelfView:
         app = self.app
         _cx, _cy, W, H, _ca, _sa = self._frame()
         z0, h = app._furn_z(self.shelf)
-        s = f"{self._name(self.shelf)}: {W:g} × {H:g} × {h:g} cm   ·   {len(self.items())} {app.get_text('items_count')}"
+        s = f"{self._name(self.shelf)}: {_cm(W)} × {_cm(H)} × {_cm(h)} cm   ·   {len(self.items())} {app.get_text('items_count')}"
         if self.add_fid:
             s += f"   ·   ➕ {app.get_text('click_to_place')}"
         if extra:
@@ -1693,7 +1700,7 @@ class ShelfView:
         self.front.delete("ghost")
         self.front.create_rectangle(self.fx(u0), self.fz(zb + hh), self.fx(u0 + w), self.fz(zb),
                                     outline="#2f6fed", dash=(4, 3), width=2, tags="ghost")
-        self._status(f"↔ {u0:g} cm")
+        self._status(f"↔ {_cm(u0)} cm")
 
     def _release(self, e):
         d, self.drag = self.drag, None
@@ -2090,6 +2097,8 @@ class App:
         self._build_toolbar()
         self._build_main_area()
         self.draw_grid()
+        self._saved_sig = self._project_sig()   # empty project counts as saved
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
     # ═══════════════════════════════════════════════════════════════════════════
     #  Settings and Translation Handlers
@@ -6354,6 +6363,34 @@ class App:
                              for m in floor["measurements"]],
         }
 
+    # ── Unsaved changes: compare a fingerprint of the project data ──────────
+    def _project_sig(self):
+        try:
+            return json.dumps([self._floor_to_dict(f) for f in self.floors],
+                              sort_keys=True, default=str)
+        except Exception:
+            return None
+
+    def _has_unsaved_changes(self):
+        sig = self._project_sig()
+        return sig is not None and sig != getattr(self, "_saved_sig", None)
+
+    def _confirm_discard(self):
+        """True = OK to continue (saved, or user chose not to save)."""
+        if not self._has_unsaved_changes():
+            return True
+        ans = messagebox.askyesnocancel(self.get_text("unsaved_title"),
+                                        self.get_text("unsaved_msg"), parent=self.root)
+        if ans is None:
+            return False
+        if ans:
+            return self.save_json()
+        return True
+
+    def _on_close(self):
+        if self._confirm_discard():
+            self.root.destroy()
+
     def save_json(self):
         filetypes_list = [
             (self.get_text("json_files"), "*.json"),
@@ -6362,7 +6399,7 @@ class App:
         path=filedialog.asksaveasfilename(title=self.get_text("save_proj"),
             defaultextension=".json",
             filetypes=filetypes_list)
-        if not path: return
+        if not path: return False
         data={
             "grid_val": self.grid_val_var.get(),
             "units": self.units,
@@ -6372,10 +6409,16 @@ class App:
         }
         try:
             with open(path,"w",encoding="utf-8") as fp: json.dump(data,fp,indent=2)
-            messagebox.showinfo(self.get_text("saved_title"),f"{self.get_text('saved_msg')}\n{path}")
-        except OSError as e: messagebox.showerror(self.get_text("error_title"),str(e))
+        except OSError as e:
+            messagebox.showerror(self.get_text("error_title"),str(e))
+            return False
+        self._saved_sig = self._project_sig()
+        messagebox.showinfo(self.get_text("saved_title"),f"{self.get_text('saved_msg')}\n{path}")
+        return True
 
     def load_json(self):
+        if not self._confirm_discard():
+            return
         filetypes_list = [
             (self.get_text("json_files"), "*.json"),
             (self.get_text("all_files"), "*.*")
@@ -6449,6 +6492,7 @@ class App:
         self._rebuild_floor_buttons()
         self.floor_var.set(self.current_floor)
         self._redraw_all()
+        self._saved_sig = self._project_sig()
 
 
 def _install_error_log(root):

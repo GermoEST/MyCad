@@ -5,7 +5,9 @@
         "author": "",
         "version": "15"
     },
-    "title": "Floor Plan Maker V15",
+    "title": "MyCAD V15",
+    "unsaved_title": "Unsaved changes",
+    "unsaved_msg": "The drawing has unsaved changes.\n\nSave them first?",
     "file": "File",
     "save_proj": "Save Project...",
     "load_proj": "Open Project...",
