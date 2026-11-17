@@ -1,0 +1,14 @@
+# MyCAD / Floor Plan Maker
+# ------------------------
+# The program uses only the Python standard library, so there is nothing
+# to install with pip. This file exists so `pip install -r requirements.txt`
+# works and documents the actual requirements:
+#
+#   * Python 3.8 or newer
+#   * Tkinter (part of Python, but packaged separately on some systems)
+#       - Windows / macOS (python.org installer): included, tick "tcl/tk" in the installer
+#       - Debian / Ubuntu:  sudo apt install python3-tk
+#       - Fedora:           sudo dnf install python3-tkinter
+#       - Arch:             sudo pacman -S tk
+#
+# Check that Tkinter works:  python -m tkinter

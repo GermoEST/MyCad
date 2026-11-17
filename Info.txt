@@ -1,0 +1,329 @@
+==============================================================================
+  MyCAD - Krundiplaneerija / Floor Plan Maker V15
+==============================================================================
+
+Lihtne korruseplaanide joonistamise programm. Programmiga saab:
+  - joonistada seinu ja vabakäejooni ning teha mõõtmisi
+  - tuvastada ruume automaatselt ja arvutada nende pindala
+  - kasutada mitut korrust (alumise korruse seinad paistavad hallilt läbi)
+  - lisada seintele uksi ja aknaid
+  - paigutada mööblit ja joonistada oma mööbliesemeid
+  - vaadata maja 3D-s ja eksportida see OBJ-failina (Blender jt)
+  - hallata mööblikategooriaid (lisada, ümber nimetada, kustutada, järjestada)
+  - valida mõõtühikuks meetrid või jalad/tollid
+  - valida heleda või tumeda teema
+  - kasutada mitut keelt (keelefailid on kaustas lang/)
+
+Projektid salvestatakse JSON-failidena (Fail -> Salvesta projekt).
+
+
+------------------------------------------------------------------------------
+  FAILID JA KAUSTAD
+------------------------------------------------------------------------------
+
+  mycad.pyw              Programm ise
+  lang/                  Keelefailid (et.json, en.json, ...). Juhend: lang/README.md
+  check_translations.py  Tõlgete kontroll ja uue keele loomine
+  requirements.txt       Nõuded (väliseid pakette pole vaja)
+  Info.txt               See fail
+  Info_EN.txt            Sama juhend inglise keeles
+
+Programm loob esimesel käivitusel enda kõrvale veel:
+  config.json            Seaded (keel, ühikud, teema, seinte vaikekõrgus ja -paksus)
+  library/               Mööbliteek. Iga kategooria on eraldi JSON-fail,
+                         kategooriate nimekiri on failis library/_categories.json
+
+  error.log              Tekib ainult siis, kui programmis tekib viga. Saada
+                         see fail arendajale, sest .pyw ei näita vigu konsoolis.
+
+NB! Need kaustad luuakse alati programmi enda kausta. Seega peab programmi
+kaustas olema kirjutusõigus, nt C:\Users\<nimi>\MyCAD, mitte C:\Program Files.
+
+
+------------------------------------------------------------------------------
+  NÕUDED
+------------------------------------------------------------------------------
+
+  - Python 3.8 või uuem
+  - Tkinter (kuulub Pythoni juurde, kuid Linuxis on see sageli eraldi pakett)
+
+Muid teeke vaja ei ole. Kõik kasutatavad moodulid (tkinter, json, math, os,
+re, sys, shutil, time, unicodedata) kuuluvad Pythoni standardteeki.
+
+
+==============================================================================
+  WINDOWS
+==============================================================================
+
+1) KONTROLLI, KAS PYTHON ON OLEMAS
+   Ava käsurida (Win + R -> cmd -> Enter) ja kirjuta:
+
+       py --version
+
+   Kui näed näiteks "Python 3.12.x", on Python olemas.
+   Kui tuleb viga, paigalda Python aadressilt https://www.python.org/downloads/
+   Paigaldamisel:
+     [x] Add python.exe to PATH
+     [x] tcl/tk and IDLE   (vaikimisi valitud. See ongi Tkinter, ära seda maha võta!)
+
+2) KONTROLLI TKINTERIT
+
+       py -m tkinter
+
+   Kui avaneb väike aken, kus on kirjas "This is Tcl/Tk version ...", on kõik
+   olemas. Kui tuleb viga "No module named tkinter", käivita Pythoni
+   paigaldaja uuesti, vali "Modify" ja pane linnuke kasti "tcl/tk and IDLE".
+
+3) KÄIVITA PROGRAMM
+   - Topeltklõps failil mycad.pyw (konsooliakent ei avane)
+   - või käsurealt, kui tahad näha võimalikke veateateid:
+
+       cd C:\tee\programmi\kausta
+       py mycad.pyw
+
+4) EXE-FAILI TEGEMINE (PyInstaller)
+   Käivita käsureal programmi kaustas:
+
+       py -m pip install --upgrade pyinstaller
+       py -m PyInstaller --onefile --windowed --name MyCAD --add-data "lang;lang" mycad.pyw
+
+   Valmis fail tekib kausta:  dist\MyCAD.exe
+
+   Selgitused:
+     --onefile         kõik pakitakse ühte .exe-faili
+     --windowed        konsooliakent ei avata
+     --add-data ...    keelefailid pakitakse kaasa. Esimesel käivitusel
+                       kopeeritakse need exe kõrvale kausta lang\, kus neid
+                       saab muuta ja kuhu saab uusi keeli lisada.
+     --icon ikoon.ico  (valikuline) oma ikoon
+
+   Märkused:
+     - EXE tuleb ehitada Windowsis. Linuxis Windowsi exe-d teha ei saa.
+     - Kui viirusetõrje ühe faili exe-d valepositiivselt kahtlustab, kasuta
+       --onefile asemel --onedir. Siis tekib kaust dist\MyCAD\, milles on
+       MyCAD.exe ja selle tugifailid. Jaga kogu kausta.
+     - Ajutised kaustad build\ ja fail MyCAD.spec võib pärast kustutada.
+
+
+==============================================================================
+  LINUX
+==============================================================================
+
+1) KONTROLLI, KAS PYTHON JA TKINTER ON OLEMAS
+
+       python3 --version
+       python3 -m tkinter
+
+   Kui avaneb väike Tk aken, on kõik olemas.
+   Kui tuleb viga "No module named tkinter", paigalda see:
+
+       Debian / Ubuntu / Mint:   sudo apt install python3-tk
+       Fedora:                   sudo dnf install python3-tkinter
+       Arch / Manjaro:           sudo pacman -S tk
+       openSUSE:                 sudo zypper install python3-tk
+
+2) KÄIVITA PROGRAMM
+
+       cd /tee/programmi/kausta
+       python3 mycad.pyw
+
+3) ISESEISEV PROGRAMM (PyInstaller)
+   Uuemad distrod ei luba pip-iga süsteemi Pythonisse pakette paigaldada,
+   seepärast kasuta virtuaalkeskkonda (venv):
+
+       sudo apt install python3-venv python3-tk      # Debian/Ubuntu
+       cd /tee/programmi/kausta
+       python3 -m venv venv
+       source venv/bin/activate
+       pip install pyinstaller
+       pyinstaller --onefile --windowed --name mycad --add-data "lang:lang" mycad.pyw
+       deactivate
+
+   Valmis programm tekib kausta:  dist/mycad
+   Käivitamine:
+
+       chmod +x dist/mycad
+       ./dist/mycad
+
+   Märkused:
+     - Linuxis eraldab --add-data parameetris kaksoospunkt (lang:lang),
+       Windowsis semikoolon (lang;lang).
+     - Programm töötab samal või uuemal distrol kui see, millel see ehitati.
+       Laiema ühilduvuse saamiseks ehita see vanimal distrol, mida toetada tahad.
+     - Ajutised kaustad build/ ja venv/ ning fail mycad.spec võib pärast kustutada.
+
+4) (VALIKULINE) MENÜÜKIRJE
+   Kopeeri dist/mycad näiteks kausta ~/Apps/MyCAD/ ja loo fail
+   ~/.local/share/applications/mycad.desktop, mille sisu on:
+
+       [Desktop Entry]
+       Type=Application
+       Name=MyCAD
+       Comment=Korruseplaanide joonistamine
+       Exec=/home/KASUTAJA/Apps/MyCAD/mycad
+       Path=/home/KASUTAJA/Apps/MyCAD
+       Terminal=false
+       Categories=Graphics;
+
+
+==============================================================================
+  USED, AKNAD JA 3D
+==============================================================================
+
+SEINTE KÕRGUS JA PAKSUS
+  - Uued seinad saavad vaikimisi kõrguse 260 cm ja paksuse 15 cm.
+    Vaikeväärtusi saab muuta: Seaded -> Seinte vaikeväärtused.
+  - Topeltklõps seinal avab seina omadused. Seal saab muuta selle seina
+    kõrgust ja paksust või rakendada need kõigile selle korruse seintele.
+  - Korrused paigutatakse 3D-s üksteise peale: iga korruse kõrgus on selle
+    korruse kõrgeim sein + 20 cm vahelagi.
+
+USED JA AKNAD
+  - Vali tööriistaribal "Uks" või "Aken" (või mööblipaneelis kategooriast
+    "Uksed ja aknad") ja kliki seinale. Ava paigutatakse sinna, kus
+    klõpsasid, ja see liigub alati koos seinaga. Tööriist jääb aktiivseks,
+    nii et saad lisada mitu ust või akent järjest. Lõpetamiseks vali "Vali".
+  - Muuda-režiimis saab ust või akent mööda seina lohistada.
+  - Topeltklõps uksel või aknal avab omadused:
+      uks:  laius, kõrgus, hingede pool, avanemise suund
+      aken: laius, kõrgus, rinnatise kõrgus (aknalaua kõrgus põrandast)
+  - Valitud ukse avanemissuunda saab muuta ka R / L klahviga.
+  - Vaikimisi suurused: uks 90 x 210 cm, aken 120 x 120 cm, rinnatis 90 cm.
+  - Kui vanas projektis on uks paigutatud mööbliesemena, muudetakse see
+    projekti avamisel automaatselt päris seina avaks.
+
+MÖÖBEL 3D-S
+  - Sisseehitatud mööblil on oma 3D-kuju ja kõrgus (diivan, voodi, laud jne).
+  - Topeltklõps mööblil: kõrgus (3D) ja kõrgus põrandast (nt seinakapp).
+  - Oma mööbli loomise aknas on väli "Kõrgus (3D)". Joonistatud kujund
+    tõstetakse 3D-s selle kõrguseni.
+
+OMA MÖÖBLI LOOMINE ("+ Uus mööbliese")
+  - Joonistusala on kuni 5 x 5 m. Üleval ja vasakul on mõõdulindid
+    sentimeetrites ning punane joon lintidel näitab kursori asukohta.
+  - "Ruut": joondamise samm 1, 5 või 10 cm. See ei sõltu põhiprogrammi
+    ruudustikust.
+  - Suum: Ctrl + rullik või nupud - / +. Rullik kerib üles-alla,
+    Shift + rullik külgsuunas.
+  - Joonistamise ajal näed kujundi suurust (nt "60 x 40 cm") ja hulknurga
+    külje pikkust. Joonise kõrval on kogu eseme mõõdujooned.
+  - "Mõõdud" plokk: Laius, Sügavus ja Kõrgus (3D). Kui kirjutad laiuse ja
+    sügavuse ning vajutad Enter, muudetakse joonis selle suuruseks. Kui
+    midagi pole veel joonistatud, tehakse selle suurusega ristkülik.
+  - Vali-tööriistaga saab kujundit lohistades liigutada. Hulknurga puhul
+    klõpsa punktid ja lõpeta topeltklõpsuga.
+
+RIIULID (laoriiul, raamaturiiul ...)
+  - Mööblipaneelis on kategoorias "Ladu" valmis "Laoriiul" (120 x 50 x 200 cm,
+    5 lauda) ja "Kast" (60 x 40 x 30 cm).
+  - Oma riiuli tegemiseks vali mööbli loomise aknas "Tüüp: Riiul" ja määra
+    "Riiulilaudu" (2-30) ning "Alumine laud põrandast". Lauad jaotatakse
+    ühtlaselt kuni eseme kõrguseni (ülemine laud on riiuli pealmine pind).
+  - 3D-s on riiulil postid ja lauad, nii et sisse pandud asjad on näha.
+    2D-s on riiulil postid ja rist.
+  - Kui paned eseme riiulile (Virnasta sees), läheb see alumisele vabale
+    lauale, kuhu see ära mahub. Kui kast mahub teise kasti peale ilma
+    järgmist lauda puudutamata, läheb see sinna, muidu järgmisele lauale.
+    Ctrl + D täidab nii riiulit alt üles.
+  - PageUp / PageDown tõstab valitud eseme ühe laua (või virna koha) võrra
+    üles või alla.
+
+RIIULI VAADE (eestvaade)
+  - Topeltklõps riiulil või millelgi, mis selles on, avab riiuli eestvaate.
+    Riiul on seal mõõtkavas koos postide, laudade ja kõigi asjadega. Iga laua
+    juures on kirjas selle vaba kõrgus (nt "↕ 44.5 cm"). Taga olevad asjad
+    on heledamad.
+  - Lohista eset külgsuunas või teisele lauale. Ese ei lähe kunagi läbi laua
+    ega teiste asjade. Kui sihtkohas pole ruumi, nihutatakse see lähimasse
+    vabasse kohta.
+  - "Pane riiulile": vali ese, vajuta "Lisa" ja kliki lauale. Ese pannakse
+    riiuli esiserva vastu. Lisamist saab jätkata, Esc lõpetab.
+  - "Kopeeri" (Ctrl + D) paneb koopia kõrvale või järgmisse vabasse kohta.
+    "Kustuta" (Del) kustutab. "Omadused" või topeltklõps avab eseme omadused.
+  - All olev riba näitab valitud eseme lauda pealt. Lohista seal eset üles,
+    et see nihkuks riiulis tahapoole, või alla, et see tuleks ette.
+  - Nooled liigutavad valitud eset 1 cm (Shift + nool 5 cm). PageUp ja
+    PageDown viivad selle laua võrra üles või alla.
+  - "Vaata teiselt poolt" pöörab vaate riiuli teisele küljele.
+  - Kõik muudatused on kohe näha ka 2D-plaanil ja 3D-vaates.
+  - Trepp ulatub 3D-s automaatselt järgmise korruseni.
+
+MÖÖBLIPANEEL
+  - Klõps kategooria pealkirjal (nt "▼ Elutuba (6)") peidab või näitab selle
+    kategooria esemeid. "Ahenda kõik" / "Laienda kõik" teeb seda kõigiga
+    korraga. Programm jätab valiku meelde ka järgmiseks korraks.
+
+MÖÖBLI VIRNASTAMINE (nt laoruum)
+  - Kui tööriistaribal on "Virnasta" sees (vaikimisi), läheb teise eseme
+    peale pandud või lohistatud mööbliese automaatselt selle peale.
+    "Peal" tähendab, et ühe eseme keskpunkt on teise eseme kohal.
+  - Ctrl + D kopeerib valitud eseme ja paneb koopia selle peale.
+    Näiteks 8 kasti virn: pane üks kast maha ja vajuta 7 korda Ctrl + D.
+  - Topeltklõps esemel -> "Lisa koopiaid peale (tk)": lisab korraga mitu.
+  - Kui eemaldad või kustutad virnast eseme, vajuvad ülemised alla.
+  - 2D-s näidatakse virna ülemise eseme silti kujul "Kast ×8" ja
+    ↑ näitab, kui kõrgel põrandast ese on. Klõps valib alati virna ülemise eseme.
+  - Kui kirjutad topeltklõpsu dialoogis "Kõrgus põrandast" käsitsi, jääb ese
+    sinna kõrgusele (nt seinakapp) ega vaju alla.
+  - Oma eseme (nt "Kast") tegemiseks kasuta nuppu "+ Uus mööbliese" ja
+    määra seal ka "Kõrgus (3D)".
+
+3D-VAADE (nupp "3D-vaade")
+  Hiire vasak nupp + lohistamine     pööra vaadet ümber maja
+  Parem/keskmine nupp või Shift      liiguta vaadet
+  Rullik või + / -                   suumi
+  Nooleklahvid                       pööra
+  W / A / S / D                      liigu edasi / vasakule / tagasi / paremale
+  Q / E                              liigu alla / üles
+  Shift + WASD / QE                  liigu kiiremini
+  "🚶 Jalutusrežiim"                 vaade silmade kõrguselt (1,65 m) toa keskelt:
+                                     lohistamine pöörab pead, rullik astub,
+                                     WASD-ga saab toast tuppa kõndida
+  "Kõik korrused"                    näita kõiki korruseid või ainult aktiivset
+  "Mööbel"                           näita või peida mööbel
+  3D-vaade uueneb ise, kui joonist muudad.
+
+OBJ EKSPORT
+  Fail -> Ekspordi 3D (OBJ)... (või sama nupp 3D-vaates)
+  Tekivad failid maja.obj ja maja.mtl (värvid). Need peavad jääma samasse
+  kausta. Mõõtühik on meetrid. Fail avaneb Blenderis, SketchUpis (pluginaga),
+  Windowsi 3D Vieweris, MeshLabis ja paljudes veebivaaturites.
+
+
+==============================================================================
+  KIIRKLAHVID
+==============================================================================
+
+  Programmis vajuta F1 (või ❓ Abi -> Klahvikombinatsioonid): avaneb aken,
+  kus on kõik klahvikombinatsioonid teemade kaupa.
+
+  F1                näita / sulge klahvikombinatsioonide abi
+
+  R / L             pööra mööblit päri- / vastupäeva
+  Del               kustuta valitud
+  Ctrl + klõps      lisa valikusse
+  Shift + klõps     eemalda valikust
+  Lohista tühjal    vali mitu eset
+  Ctrl + rullik     suumi
+  Keskmine nupp     liiguta vaadet
+  M                 mõõtmisrežiim
+  Esc               katkesta joonistamine
+  Topeltklõps       omadused (sein, uks, aken, mööbel)
+  R / L (uks)       muuda valitud ukse avanemissuunda
+  Ctrl + D          kopeeri valitud mööbliese selle enda peale
+  PageUp / PageDown tõsta valitud ese riiuli / virna võrra üles või alla
+
+
+==============================================================================
+  UUE KEELE LISAMINE
+==============================================================================
+
+       py check_translations.py --new fi "Suomi"        (Windows)
+       python3 check_translations.py --new fi "Suomi"   (Linux)
+
+Seejärel tõlgi faili lang/fi.json väärtused ja kontrolli tulemust:
+
+       py check_translations.py
+
+Programmis vali Seaded -> Keel -> "Laadi keelefailid uuesti".
+Täpsem juhend on failis lang/README.md.
