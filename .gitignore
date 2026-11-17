@@ -1,11 +1,11 @@
-# PyInstalleri ehitus
+# PyInstalleri ajutised failid
 build/
-dist/
 *.spec
 __pycache__/
 *.pyc
 
-# Programm loob need ise (kasutaja seaded, logi, mooblitekk)
-config.json
+# Vigade logi
 error.log
-library/
+
+# Arhiiv
+MyCad.zip

@@ -1,0 +1,38 @@
+[
+  {
+    "fid": "bed_double",
+    "label_key": "bed_double_lbl",
+    "category": "bedroom",
+    "width": 160,
+    "height": 200,
+    "draw_fn": "bed_double",
+    "points": null
+  },
+  {
+    "fid": "bed_single",
+    "label_key": "bed_single_lbl",
+    "category": "bedroom",
+    "width": 80,
+    "height": 200,
+    "draw_fn": "bed_single",
+    "points": null
+  },
+  {
+    "fid": "wardrobe",
+    "label_key": "wardrobe_lbl",
+    "category": "bedroom",
+    "width": 200,
+    "height": 60,
+    "draw_fn": "wardrobe",
+    "points": null
+  },
+  {
+    "fid": "desk",
+    "label_key": "desk_lbl",
+    "category": "bedroom",
+    "width": 120,
+    "height": 60,
+    "draw_fn": "desk",
+    "points": null
+  }
+]

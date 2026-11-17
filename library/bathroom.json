@@ -1,0 +1,47 @@
+[
+  {
+    "fid": "bath",
+    "label_key": "bath_lbl",
+    "category": "bathroom",
+    "width": 160,
+    "height": 80,
+    "draw_fn": "bathtub",
+    "points": null
+  },
+  {
+    "fid": "shower",
+    "label_key": "shower_lbl",
+    "category": "bathroom",
+    "width": 80,
+    "height": 80,
+    "draw_fn": "shower",
+    "points": null
+  },
+  {
+    "fid": "toilet",
+    "label_key": "toilet_lbl",
+    "category": "bathroom",
+    "width": 40,
+    "height": 60,
+    "draw_fn": "toilet",
+    "points": null
+  },
+  {
+    "fid": "sink_b",
+    "label_key": "sink_b_lbl",
+    "category": "bathroom",
+    "width": 50,
+    "height": 40,
+    "draw_fn": "sink_bath",
+    "points": null
+  },
+  {
+    "fid": "wash_mach",
+    "label_key": "wash_mach_lbl",
+    "category": "bathroom",
+    "width": 60,
+    "height": 60,
+    "draw_fn": "washing_machine",
+    "points": null
+  }
+]

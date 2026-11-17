@@ -1,0 +1,47 @@
+[
+  {
+    "fid": "fridge",
+    "label_key": "fridge_lbl",
+    "category": "kitchen",
+    "width": 60,
+    "height": 60,
+    "draw_fn": "fridge",
+    "points": null
+  },
+  {
+    "fid": "stove",
+    "label_key": "stove_lbl",
+    "category": "kitchen",
+    "width": 60,
+    "height": 60,
+    "draw_fn": "stove",
+    "points": null
+  },
+  {
+    "fid": "sink_k",
+    "label_key": "sink_k_lbl",
+    "category": "kitchen",
+    "width": 60,
+    "height": 40,
+    "draw_fn": "sink_kitchen",
+    "points": null
+  },
+  {
+    "fid": "dishwasher",
+    "label_key": "dishwasher_lbl",
+    "category": "kitchen",
+    "width": 60,
+    "height": 60,
+    "draw_fn": "dishwasher",
+    "points": null
+  },
+  {
+    "fid": "kitchen_cnt",
+    "label_key": "kitchen_cnt_lbl",
+    "category": "kitchen",
+    "width": 160,
+    "height": 60,
+    "draw_fn": "counter",
+    "points": null
+  }
+]

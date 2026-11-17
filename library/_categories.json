@@ -1,0 +1,38 @@
+[
+  {
+    "id": "doors_windows",
+    "label_key": "doors_windows"
+  },
+  {
+    "id": "living_room",
+    "label_key": "living_room"
+  },
+  {
+    "id": "dining_room",
+    "label_key": "dining_room"
+  },
+  {
+    "id": "bedroom",
+    "label_key": "bedroom"
+  },
+  {
+    "id": "kitchen",
+    "label_key": "kitchen"
+  },
+  {
+    "id": "bathroom",
+    "label_key": "bathroom"
+  },
+  {
+    "id": "stairs",
+    "label_key": "stairs"
+  },
+  {
+    "id": "custom",
+    "label_key": "custom_cat"
+  },
+  {
+    "id": "storage",
+    "label_key": "storage"
+  }
+]

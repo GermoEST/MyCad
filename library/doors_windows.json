@@ -1,0 +1,20 @@
+[
+  {
+    "fid": "door",
+    "label_key": "door_lbl",
+    "category": "doors_windows",
+    "width": 90,
+    "height": 90,
+    "draw_fn": "opening_door",
+    "points": null
+  },
+  {
+    "fid": "window",
+    "label_key": "window_lbl",
+    "category": "doors_windows",
+    "width": 120,
+    "height": 20,
+    "draw_fn": "opening_window",
+    "points": null
+  }
+]
