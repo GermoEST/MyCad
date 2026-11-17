@@ -1,0 +1,12 @@
+{
+    "language": "et",
+    "units": "metric",
+    "theme": "light",
+    "auto_stack": true,
+    "seeded": [
+        "storage"
+    ],
+    "collapsed_cats": [],
+    "wall_height": 260,
+    "wall_thickness": 15
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "fid": "stairs",
+    "label_key": "stairs_lbl",
+    "category": "stairs",
+    "width": 100,
+    "height": 240,
+    "draw_fn": "stairs",
+    "points": null
+  },
+  {
+    "fid": "spiral_stairs",
+    "label_key": "spiral_stairs_lbl",
+    "category": "stairs",
+    "width": 140,
+    "height": 140,
+    "draw_fn": "spiral_stairs",
+    "points": null
+  },
+  {
+    "fid": "ladder",
+    "label_key": "ladder_lbl",
+    "category": "stairs",
+    "width": 50,
+    "height": 200,
+    "draw_fn": "ladder",
+    "points": null
+  }
+]

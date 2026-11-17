@@ -1,0 +1,76 @@
+[
+  {
+    "fid": "storage_shelf",
+    "label_key": "storage_shelf_lbl",
+    "category": "storage",
+    "width": 120,
+    "height": 50,
+    "draw_fn": "custom_shape",
+    "shape": [
+      {
+        "type": "polygon",
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            120,
+            0
+          ],
+          [
+            120,
+            50
+          ],
+          [
+            0,
+            50
+          ]
+        ]
+      }
+    ],
+    "fill": "#a9bccf",
+    "outline": "#5d7186",
+    "z_height": 200,
+    "shelf": {
+      "levels": 5,
+      "bottom": 10,
+      "board": 3,
+      "post": 5
+    }
+  },
+  {
+    "fid": "storage_box",
+    "label_key": "storage_box_lbl",
+    "category": "storage",
+    "width": 60,
+    "height": 40,
+    "draw_fn": "custom_shape",
+    "shape": [
+      {
+        "type": "polygon",
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            60,
+            0
+          ],
+          [
+            60,
+            40
+          ],
+          [
+            0,
+            40
+          ]
+        ]
+      }
+    ],
+    "fill": "#c8a26a",
+    "outline": "#7a5a2a",
+    "z_height": 30
+  }
+]

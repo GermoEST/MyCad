@@ -1,0 +1,56 @@
+[
+  {
+    "fid": "sofa_3",
+    "label_key": "sofa_3_lbl",
+    "category": "living_room",
+    "width": 240,
+    "height": 100,
+    "draw_fn": "sofa",
+    "points": null
+  },
+  {
+    "fid": "sofa_2",
+    "label_key": "sofa_2_lbl",
+    "category": "living_room",
+    "width": 160,
+    "height": 100,
+    "draw_fn": "sofa",
+    "points": null
+  },
+  {
+    "fid": "armchair",
+    "label_key": "armchair_lbl",
+    "category": "living_room",
+    "width": 100,
+    "height": 100,
+    "draw_fn": "armchair",
+    "points": null
+  },
+  {
+    "fid": "coffee_tbl",
+    "label_key": "coffee_tbl_lbl",
+    "category": "living_room",
+    "width": 120,
+    "height": 60,
+    "draw_fn": "coffee_table",
+    "points": null
+  },
+  {
+    "fid": "tv_stand",
+    "label_key": "tv_stand_lbl",
+    "category": "living_room",
+    "width": 160,
+    "height": 40,
+    "draw_fn": "tv_stand",
+    "points": null
+  },
+  {
+    "fid": "tv",
+    "label_key": "tv_lbl",
+    "category": "living_room",
+    "width": 140,
+    "height": 10,
+    "draw_fn": "tv",
+    "points": null
+  }
+]

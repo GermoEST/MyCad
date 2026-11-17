@@ -1,0 +1,29 @@
+[
+  {
+    "fid": "table_rect",
+    "label_key": "table_rect_lbl",
+    "category": "dining_room",
+    "width": 120,
+    "height": 80,
+    "draw_fn": "rect_table",
+    "points": null
+  },
+  {
+    "fid": "table_round",
+    "label_key": "table_round_lbl",
+    "category": "dining_room",
+    "width": 80,
+    "height": 80,
+    "draw_fn": "round_table",
+    "points": null
+  },
+  {
+    "fid": "chair",
+    "label_key": "chair_lbl",
+    "category": "dining_room",
+    "width": 40,
+    "height": 40,
+    "draw_fn": "chair",
+    "points": null
+  }
+]
