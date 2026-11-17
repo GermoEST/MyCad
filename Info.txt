@@ -15,6 +15,8 @@ Lihtne korruseplaanide joonistamise programm. Programmiga saab:
   - kasutada mitut keelt (keelefailid on kaustas lang/)
 
 Projektid salvestatakse JSON-failidena (Fail -> Salvesta projekt).
+Kui sulged programmi või avad teise projekti ja joonisel on salvestamata
+muudatusi, küsib MyCAD, kas need enne salvestada (Jah / Ei / Loobu).
 
 
 ------------------------------------------------------------------------------
