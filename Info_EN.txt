@@ -1,0 +1,333 @@
+==============================================================================
+  MyCAD - Floor Plan Maker V15
+==============================================================================
+
+A simple program for drawing floor plans. With it you can:
+  - draw walls and freehand lines, and take measurements
+  - detect rooms automatically and calculate their area
+  - work with several floors (walls of the floor below show through in gray)
+  - add doors and windows to walls
+  - place furniture and draw your own furniture pieces
+  - view the house in 3D and export it as an OBJ file (Blender etc.)
+  - manage furniture categories (add, rename, delete, reorder)
+  - use metric (m/cm) or imperial (ft/in) units
+  - choose a light or dark theme
+  - use several languages (language files are in the lang/ folder)
+
+Projects are saved as JSON files (File -> Save Project).
+
+
+------------------------------------------------------------------------------
+  FILES AND FOLDERS
+------------------------------------------------------------------------------
+
+  mycad.pyw              The program
+  lang/                  Language files (et.json, en.json, ...). Guide: lang/README.md
+  check_translations.py  Checks translations and creates new language files
+  requirements.txt       Requirements (no external packages needed)
+  Info_EN.txt            This file (Estonian version: Info.txt)
+
+On first start the program also creates these next to itself:
+  config.json            Settings (language, units, theme, default wall height/thickness)
+  library/               Furniture library. Each category is a separate JSON
+                         file, and the list of categories is in
+                         library/_categories.json
+
+  error.log              Only appears if the program hits an error. Send this
+                         file to the developer, since .pyw shows no console.
+
+NOTE: These are always created in the program's own folder, so the program
+must be in a folder you can write to, e.g. C:\Users\<name>\MyCAD, not
+C:\Program Files.
+
+
+------------------------------------------------------------------------------
+  REQUIREMENTS
+------------------------------------------------------------------------------
+
+  - Python 3.8 or newer
+  - Tkinter (comes with Python, but on Linux it is often a separate package)
+
+No other libraries are needed. All modules used (tkinter, json, math, os,
+re, sys, shutil, time, unicodedata) are part of the Python standard library.
+
+
+==============================================================================
+  WINDOWS
+==============================================================================
+
+1) CHECK THAT PYTHON IS INSTALLED
+   Open a command prompt (Win + R -> cmd -> Enter) and type:
+
+       py --version
+
+   If you see something like "Python 3.12.x", Python is installed.
+   If you get an error, install Python from https://www.python.org/downloads/
+   During installation select:
+     [x] Add python.exe to PATH
+     [x] tcl/tk and IDLE   (selected by default. This is Tkinter, keep it selected!)
+
+2) CHECK TKINTER
+
+       py -m tkinter
+
+   If a small window opens saying "This is Tcl/Tk version ...", everything
+   is in place. If you get "No module named tkinter", run the Python
+   installer again, choose "Modify" and select "tcl/tk and IDLE".
+
+3) RUN THE PROGRAM
+   - Double-click mycad.pyw (no console window opens)
+   - or from the command line, if you want to see possible error messages:
+
+       cd C:\path\to\program\folder
+       py mycad.pyw
+
+4) BUILDING AN EXE (PyInstaller)
+   Run these in the program folder:
+
+       py -m pip install --upgrade pyinstaller
+       py -m PyInstaller --onefile --windowed --name MyCAD --add-data "lang;lang" mycad.pyw
+
+   The finished file is created at:  dist\MyCAD.exe
+
+   What the options do:
+     --onefile         packs everything into a single .exe file
+     --windowed        no console window
+     --add-data ...    bundles the language files. On first start they are
+                       copied next to the exe into a lang\ folder, where you
+                       can edit them and add new languages.
+     --icon icon.ico   (optional) your own icon
+
+   Notes:
+     - The EXE must be built on Windows. You can't build a Windows exe on Linux.
+     - If antivirus software flags the single-file exe (a false positive),
+       use --onedir instead of --onefile. This creates a dist\MyCAD\ folder
+       containing MyCAD.exe and its support files. Share the whole folder.
+     - The temporary build\ folder and the MyCAD.spec file can be deleted afterwards.
+
+
+==============================================================================
+  LINUX
+==============================================================================
+
+1) CHECK THAT PYTHON AND TKINTER ARE INSTALLED
+
+       python3 --version
+       python3 -m tkinter
+
+   If a small Tk window opens, everything is in place.
+   If you get "No module named tkinter", install it:
+
+       Debian / Ubuntu / Mint:   sudo apt install python3-tk
+       Fedora:                   sudo dnf install python3-tkinter
+       Arch / Manjaro:           sudo pacman -S tk
+       openSUSE:                 sudo zypper install python3-tk
+
+2) RUN THE PROGRAM
+
+       cd /path/to/program/folder
+       python3 mycad.pyw
+
+3) STANDALONE PROGRAM (PyInstaller)
+   Newer distros don't let pip install packages into the system Python,
+   so use a virtual environment (venv):
+
+       sudo apt install python3-venv python3-tk      # Debian/Ubuntu
+       cd /path/to/program/folder
+       python3 -m venv venv
+       source venv/bin/activate
+       pip install pyinstaller
+       pyinstaller --onefile --windowed --name mycad --add-data "lang:lang" mycad.pyw
+       deactivate
+
+   The finished program is created at:  dist/mycad
+   To run it:
+
+       chmod +x dist/mycad
+       ./dist/mycad
+
+   Notes:
+     - On Linux the --add-data separator is a colon (lang:lang),
+       on Windows a semicolon (lang;lang).
+     - The program runs on the same or a newer distro than the one it was
+       built on. For the widest compatibility, build it on the oldest distro
+       you want to support.
+     - The temporary build/ and venv/ folders and the mycad.spec file can be
+       deleted afterwards.
+
+4) (OPTIONAL) MENU ENTRY
+   Copy dist/mycad to e.g. ~/Apps/MyCAD/ and create the file
+   ~/.local/share/applications/mycad.desktop with this content:
+
+       [Desktop Entry]
+       Type=Application
+       Name=MyCAD
+       Comment=Floor plan drawing
+       Exec=/home/USERNAME/Apps/MyCAD/mycad
+       Path=/home/USERNAME/Apps/MyCAD
+       Terminal=false
+       Categories=Graphics;
+
+
+==============================================================================
+  DOORS, WINDOWS AND 3D
+==============================================================================
+
+WALL HEIGHT AND THICKNESS
+  - New walls are 260 cm high and 15 cm thick by default.
+    You can change the defaults in Settings -> Wall Defaults.
+  - Double-click a wall to open its properties. There you can change that
+    wall's height and thickness, or apply them to all walls on the floor.
+  - In 3D the floors are stacked: each floor is as high as its highest wall
+    plus a 20 cm floor slab.
+
+DOORS AND WINDOWS
+  - Choose "Door" or "Window" on the toolbar (or in the furniture panel,
+    category "Doors & Windows") and click a wall. The opening is placed where
+    you click and always moves together with the wall. The tool stays active,
+    so you can add several in a row. Choose "Select" when you are done.
+  - In Edit mode you can drag a door or window along its wall.
+  - Double-click a door or window to open its properties:
+      door:   width, height, hinge side, swing direction
+      window: width, height, sill height (how high the window starts)
+  - R / L also changes the swing of the selected door.
+  - Default sizes: door 90 x 210 cm, window 120 x 120 cm, sill 90 cm.
+  - Doors placed as furniture symbols in older projects are turned into
+    real wall openings automatically when the project is opened.
+
+FURNITURE IN 3D
+  - Built-in furniture has its own 3D shape and height (sofa, bed, table...).
+  - Double-click a furniture piece to set its 3D height and its height above
+    the floor (e.g. a wall cabinet).
+  - The furniture creator has a "Height (3D)" field. The shape you draw is
+    raised to that height in 3D.
+
+DRAWING YOUR OWN FURNITURE ("+ New Furniture")
+  - The drawing area is up to 5 x 5 m. There are rulers in centimetres at the
+    top and left, and a red line on them shows where the cursor is.
+  - "Grid": snap step of 1, 5 or 10 cm. It does not depend on the main
+    program's grid.
+  - Zoom: Ctrl + wheel or the - / + buttons. Wheel scrolls up/down,
+    Shift + wheel sideways.
+  - While drawing you see the shape's size (e.g. "60 x 40 cm") and the length
+    of a polygon side. The whole piece has dimension lines next to it.
+  - "Dimensions" box: Width, Depth and Height (3D). Type a width and depth
+    and press Enter to resize the drawing to that size. If nothing is drawn
+    yet, a rectangle of that size is created.
+  - With the Select tool you can drag a shape to move it. For a polygon,
+    click the points and double-click to finish.
+
+SHELVES (storage shelf, bookcase ...)
+  - The furniture panel has a ready "Storage shelf" (120 x 50 x 200 cm,
+    5 boards) and a "Box" (60 x 40 x 30 cm) in the "Storage" category.
+  - To make your own, choose "Type: Shelf" in the furniture creator and set
+    "Shelf boards" (2-30) and "Lowest board from floor". Boards are spread
+    evenly up to the piece's height (the top board is the shelf's top).
+  - In 3D a shelf has posts and boards, so what you put in it is visible.
+    In 2D it shows corner posts and a cross.
+  - Put something onto a shelf (Stack on) and it goes to the lowest free
+    board it fits on. If a box fits on top of another box without touching
+    the next board it goes there, otherwise to the next board. Ctrl + D fills
+    a shelf from the bottom up this way.
+  - PageUp / PageDown moves the selected piece one board (or stack place)
+    up or down.
+
+SHELF VIEW (front view)
+  - Double-click a shelf, or anything in it, to open its front view. The
+    shelf is drawn to scale with its posts, boards and everything on them.
+    Each board shows its free height (e.g. "↕ 44.5 cm"). Things further back
+    are drawn paler.
+  - Drag a piece sideways or onto another board. It never goes through a
+    board or other pieces. If there is no room it is moved to the nearest
+    free spot.
+  - "Put on shelf": choose an item, press "Add" and click a board. The item
+    is placed against the front edge. You can keep adding; Esc stops.
+  - "Copy" (Ctrl + D) puts a copy next to it or in the next free spot.
+    "Delete" (Del) deletes. "Properties" or double-click opens its properties.
+  - The strip below shows the selected piece's board from above. Drag a
+    piece up there to push it further back, or down to bring it forward.
+  - Arrow keys move the selected piece 1 cm (Shift + arrow 5 cm). PageUp and
+    PageDown move it one board up or down.
+  - "View from the other side" looks at the shelf from its other side.
+  - Every change shows up right away in the 2D plan and the 3D view.
+  - Stairs automatically reach the next floor in 3D.
+
+FURNITURE PANEL
+  - Click a category header (e.g. "▼ Living Room (6)") to hide or show its
+    items. "Collapse all" / "Expand all" does it for every category at once.
+    The program remembers your choice for next time.
+
+STACKING FURNITURE (e.g. a storage room)
+  - When "Stack" is on in the toolbar (default), a piece you put or drag
+    onto another piece goes on top of it automatically. "On top" means the
+    centre of one piece is over the other one.
+  - Ctrl + D copies the selected piece and puts the copy on top of it.
+    Example, a stack of 8 boxes: place one box and press Ctrl + D 7 times.
+  - Double-click a piece -> "Add copies on top (pcs)" adds several at once.
+  - When you move away or delete a piece in a stack, the ones above drop down.
+  - In 2D only the top piece of a stack shows its label, as "Box ×8", and
+    ↑ shows how high above the floor it is. A click always picks the top piece.
+  - If you type "Height above floor" by hand in the double-click dialog, the
+    piece stays at that height (e.g. a wall cabinet) and doesn't drop.
+  - To make your own piece (e.g. "Box"), use "+ New Furniture" and set its
+    "Height (3D)" there.
+
+3D VIEW (the "3D View" button)
+  Left mouse + drag                  rotate around the house
+  Right/middle mouse or Shift+drag   pan
+  Mouse wheel or + / -               zoom
+  Arrow keys                         rotate
+  W / A / S / D                      move forward / left / back / right
+  Q / E                              move down / up
+  Shift + WASD / QE                  move faster
+  "🚶 Walk mode"                     eye-level view (1.65 m) from the middle of a
+                                     room: drag turns your head, wheel takes
+                                     steps, walk from room to room with WASD
+  "All floors"                       show all floors or only the current one
+  "Furniture"                        show or hide furniture
+  The 3D view updates by itself when you change the plan.
+
+OBJ EXPORT
+  File -> Export 3D (OBJ)... (or the same button in the 3D view)
+  This creates house.obj and house.mtl (colours). Keep them in the same
+  folder. Units are metres. The file opens in Blender, SketchUp (with a
+  plugin), Windows 3D Viewer, MeshLab and many web viewers.
+
+
+==============================================================================
+  KEYBOARD SHORTCUTS
+==============================================================================
+
+  In the program press F1 (or ❓ Help -> Keyboard shortcuts) to open a
+  window that lists all shortcuts by topic.
+
+  F1                  show / close the keyboard shortcuts help
+
+  R / L               rotate furniture clockwise / counter-clockwise
+  Del                 delete selected
+  Ctrl + click        add to selection
+  Shift + click       remove from selection
+  Drag on empty area  select multiple items
+  Ctrl + scroll       zoom
+  Middle mouse        pan the view
+  M                   measuring tool
+  Esc                 cancel current drawing
+  Double-click        properties (wall, door, window, furniture)
+  R / L (door)        change the swing of the selected door
+  Ctrl + D            copy the selected furniture on top of itself
+  PageUp / PageDown   move the selected piece one shelf / stack place up or down
+
+
+==============================================================================
+  ADDING A NEW LANGUAGE
+==============================================================================
+
+       py check_translations.py --new fi "Suomi"        (Windows)
+       python3 check_translations.py --new fi "Suomi"   (Linux)
+
+Then translate the values in lang/fi.json and check the result:
+
+       py check_translations.py
+
+In the program choose Settings -> Language -> "Reload language files".
+For more details see lang/README.md.
